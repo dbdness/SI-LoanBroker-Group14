@@ -53,13 +53,13 @@ public class Main {
         String finalLoanDuration = output + " 01:00:00.0 CET";
 
         // Runs the writeXML method
-        writeXML(loan.getSSN(), 0, loan.getLoanAmount(), finalLoanDuration);
+        writeXML(loan.getSSN(), loan.getLoanAmount(), finalLoanDuration);
 
 
     }
 
     // The method that makes the XML file
-    private static void writeXML(String ssn, int creditScore, double loanAmount, String loanDuration) {
+    private static void writeXML(String ssn, double loanAmount, String loanDuration) {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -73,7 +73,6 @@ public class Main {
             rootElement.appendChild(ssnNode);
 
             Element credScoreNode = doc.createElement("creditScore");
-            credScoreNode.appendChild(doc.createTextNode(String.valueOf(creditScore)));
             rootElement.appendChild(credScoreNode);
 
             Element loanAmountNode = doc.createElement("loanAmount");
