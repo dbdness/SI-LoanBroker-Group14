@@ -7,7 +7,7 @@
 ## Overall Implementation  
 A requestor sends a request for a loan through the system. This request is firstly going through a component called: "Get Credit Score"(A Content Enricher). The "Get Credit Score" makes a request for the Credit Bureau, where all the information about a requestors credit is stored. After the retrieval of the score the component move on in the flow and get the banks through the "Get Banks"(Content Enricher) component. This component retrieves a set of rules based on the score given from the Credit Bureau. Some banks might not want to waste resources on requestors with low scores. When the rules have been applied, the cycle continues and the recipient list go out and grabs the banks that fit the implied rules. The messages are broadcastet to those banks, which were in the recipientlist, after they've been transformed into a format that the bank can read. This is the Translator component that determines the correct format for each bank. The banks look at the credit score from the requestor and based on the score, they determine an interest rate on the requested loan. The banks forwards their Best Quote back to the requestor. Before the requestor receives the Best Quote from each bank, they will go through a Normalizer and Aggregator component. The components will take the banks formats and transform it back to the requestor format and then aggregate all the quotes back into a single message.  
 
-![alt text](https://github.com/KIMB0/SI_LoanBrokerGroup14/blob/development/Loan%20Broker%20overview.png)
+![alt text](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Loan%20Broker%20overview.png)
   
 **In Brief**  
 1. Receive the consumer's loan quote request (ssn, loan amount, loan duration)
