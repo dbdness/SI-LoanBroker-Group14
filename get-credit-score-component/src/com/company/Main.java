@@ -3,9 +3,7 @@ package com.company;
 import com.company.creditScore.CreditScoreService;
 import com.company.creditScore.CreditScoreService_Service;
 import com.rabbitmq.client.*;
-import jdk.internal.org.xml.sax.InputSource;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,7 +15,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.concurrent.TimeoutException;
 
 public class Main {
@@ -39,7 +36,6 @@ public class Main {
         sendMessage(updatedRequest, channel);
 
 
-
     }
 
     private static int creditScore(java.lang.String ssn) {
@@ -49,8 +45,6 @@ public class Main {
     }
 
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
-
-
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
@@ -63,8 +57,7 @@ public class Main {
             QueueingConsumer.Delivery delivery = consumer.nextDelivery();
             response = new String(delivery.getBody());
 
-        }
-        catch (InterruptedException ex){
+        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
 
