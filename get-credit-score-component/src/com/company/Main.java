@@ -23,7 +23,13 @@ public class Main {
     private static final String CONSUME_QUEUE_NAME = "Loan_Request_Queue";
     private static final String PUBLISH_QUEUE_NAME = "Get_Credit_Score_Queue";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, TimeoutException {
+
+        String xmlMessage = receiveMessage();
+        String requestSsn = getSsn(xmlMessage);
+        int creditScore = creditScore(requestSsn);
+
+
 
         
 
