@@ -3,8 +3,10 @@ package com.company;
 import com.company.creditScore.CreditScoreService;
 import com.company.creditScore.CreditScoreService_Service;
 import com.rabbitmq.client.*;
+import jdk.internal.org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.concurrent.TimeoutException;
 
 public class Main {
@@ -24,14 +27,16 @@ public class Main {
     private static final String PUBLISH_QUEUE_NAME = "Get_Credit_Score_Queue";
 
     public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST_NAME);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
 
-        String xmlMessage = receiveMessage();
+        String xmlMessage = receiveMessage(channel);
         String requestSsn = getSsn(xmlMessage);
         int creditScore = creditScore(requestSsn);
-
-
-
-        
+        byte[] updatedRequest = appendCreditScore(xmlMessage, String.valueOf(creditScore));
+        sendMessage(updatedRequest, channel);
 
 
 
@@ -43,11 +48,8 @@ public class Main {
         return port.creditScore(ssn);
     }
 
-    private static String receiveMessage() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(HOST_NAME);
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+    private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
+
 
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
@@ -70,10 +72,10 @@ public class Main {
 
     }
 
-    private static void sendMessage(String message, Channel channel) throws IOException, TimeoutException {
+    private static void sendMessage(byte[] message, Channel channel) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);
-            channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message.getBytes("UTF-8"));
+            channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message);
             System.out.println("[x] sent '" + message + "'");
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -87,7 +89,7 @@ public class Main {
         String ssn = "";
         try {
             Document document = loadXMLFromString(xml);
-            Element ssnNode = document.getElementById("ssn");
+            Node ssnNode = document.getElementsByTagName("ssn").item(0);
             ssn = ssnNode.getTextContent();
 
         } catch (Exception ex) {
@@ -103,11 +105,8 @@ public class Main {
         byte[] xmlByteArray = {};
         try {
             Document document = loadXMLFromString(xmlToAppend);
-//            Element loanAmountNode = document.getElementById("loanAmount");
-//            Element creditScoreNode = document.createElement("creditScore");
-//            creditScoreNode.appendChild(document.createTextNode(creditScore));
-//            document.insertBefore(creditScoreNode, loanAmountNode);
-            Element creditScoreNode = document.getElementById("creditScore");
+
+            Node creditScoreNode = document.getElementsByTagName("creditScore").item(0);
             creditScoreNode.appendChild(document.createTextNode(creditScore));
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -135,6 +134,8 @@ public class Main {
         DocumentBuilder builder = factory.newDocumentBuilder();
 
         return builder.parse(new ByteArrayInputStream(xml.getBytes()));
+
+
     }
 
 
