@@ -15,7 +15,7 @@ public class Translator {
     private static final String CONSUME_QUEUE_NAME = "Recipient_List_Queue";
     private static final String PUBLISH_QUEUE_NAME = "Translator_Queue";
 
-    public static void main(String[] args) throws  IOException, TimeoutException {
+    public static void main(String[] args) throws  IOException, TimeoutException, Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(BANK_HOST);
         Connection bankConnection = factory.newConnection();
@@ -28,13 +28,13 @@ public class Translator {
 
         String jsonRequest = "{\"ssn\":1605789787,\"creditScore\":598,\"loanAmount\":10.0,\"loanDuration\":360}";
 
-        //System.out.println(getBankJsonResponse(jsonRequest, bankPublishChannel, bankConsumeChannel));
+        System.out.println(getBankJsonResponseAndForward(jsonRequest, bankPublishChannel, bankConsumeChannel));
 
-        String jsonString = "{\"ssn\":1605789787,\"creditScore\":598,\"loanAmount\":10.0,\"loanDuration\":360}";
-        System.out.println(jsonToXml(jsonString));
+        //String jsonString = "{\"ssn\":1605789787,\"creditScore\":598,\"loanAmount\":10.0,\"loanDuration\":360}";
+        //System.out.println(jsonToXml(jsonString));
 
-        String xmlString = "<LoanResponse>    <interestRate>4.5600000000000005</interestRate>    <ssn>12345678</ssn> </LoanResponse>";
-        System.out.println(xmlToJson(xmlString));
+        //String xmlString = "<LoanResponse>    <interestRate>4.5600000000000005</interestRate>    <ssn>12345678</ssn> </LoanResponse>";
+        //System.out.println(xmlToJson(xmlString));
 
     }
 
