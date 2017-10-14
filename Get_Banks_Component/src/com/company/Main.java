@@ -5,6 +5,7 @@ import ruleBase.RequestBankRules;
 import ruleBase.RequestBankRulesService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Main {
@@ -12,12 +13,24 @@ public class Main {
     private static final String HOST_NAME = "207.154.228.245";
     private static final String CONSUME_QUEUE_NAME = "Get_Credit_Score_Queue";
     private static final String PUBLISH_QUEUE_NAME = "Get_Banks_Queue";
+    private static List<String> banks;
 
+    // TODO
+    // 1. Hent data fra queuen "Get_Credit_Score_Queue".
+    // 2. Hent banke med getBanks(). Med data fra queuen.
+    // 3. Send det der var på queuen i forvejen videre på queuen "Get_Banks_Queue".
+    // 4. Send getBanks() resultat på quenen "Get_Banks_Queue".
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Test");
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST_NAME);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
 
+        String xmlMessage = receiveMessage(channel);
 
+//        banks = getBanks(700, 100000, "1976-01-23 01:00:00.0 CET");
+//        System.out.println(banks);
     }
 
     private static java.util.List<java.lang.String> getBanks(int minCreditScore, double loanAmount, String customerLoanDuration) {
@@ -26,6 +39,26 @@ public class Main {
         return port.getBanks(minCreditScore, loanAmount, customerLoanDuration);
     }
 
+    private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
+        channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
+        System.out.println("[*] Waiting for messages...");
+
+        QueueingConsumer consumer = new QueueingConsumer(channel);
+
+        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer);
+
+        String response = "";
+        try {
+            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+            response = new String(delivery.getBody());
+
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+
+        return response;
+
+    }
 
     private static void receiveAndSendMessage() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
