@@ -73,17 +73,9 @@ public class Main {
         //Publish and route message
         channel.basicPublish(PUBLISH_EXCHANGE_NAME, replyKey, builder, xmlRequest.getBytes());
 
-        QueueingConsumer consumer = new QueueingConsumer(channel);
-
-        channel.basicConsume(REPLY_QUEUE_NAME, false, consumer);
-
-        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-        String response = new String(delivery.getBody());
-
         channel.close();
         channel.getConnection().close();
-        System.out.println("[x] forwarded response successfully:");
-        System.out.println(response);
+        System.out.println("[x] forwarded response successfully!");
 
     }
 }
