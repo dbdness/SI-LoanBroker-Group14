@@ -20,12 +20,6 @@ public class Main {
     private static final String PUBLISH_QUEUE_NAME = "Get_Banks_Queue";
     private static List<String> banks;
 
-    // TODO
-    // 1. Hent data fra queuen "Get_Credit_Score_Queue".
-    // 2. Hent banke med getBanks(). Med data fra queuen.
-    // 3. Send det der var på queuen i forvejen videre på queuen "Get_Banks_Queue".
-    // 4. Send getBanks() resultat på quenen "Get_Banks_Queue".
-
     public static void main(String[] args) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(HOST_NAME);
