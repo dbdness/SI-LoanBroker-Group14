@@ -10,7 +10,8 @@ public class Translator {
 
     private static final String JSON_EXCHANGE_NAME = "cphbusiness.bankJSON";
     private static final String XML_EXCHANGE_NAME = "cphbusiness.bankXML";
-    private static final String BANK_HOST = "10.18.144.10";
+    //private static final String BANK_HOST = "10.18.144.10";
+    private static final String BANK_HOST = "datdb.cphbusiness.dk";
     private static final String HOST_NAME = "207.154.228.245";
     private static final String CONSUME_QUEUE_NAME = "Recipient_List_Queue";
     private static final String PUBLISH_QUEUE_NAME = "Translator_Queue";
