@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Main {
 
+    private static final String HOST_NAME = "207.154.228.245";
     private static final String CONSUME_QUEUE_NAME = "Xml_Bank_Translator_Queue";
     private static final String BANK_HOST = "datdb.cphbusiness.dk";
     private static final String PUBLISH_EXCHANGE_NAME = "cphbusiness.bankXML";
@@ -14,17 +15,21 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(BANK_HOST);
-        Connection bankConnection = factory.newConnection();
+        ConnectionFactory bankConnectionFactory = new ConnectionFactory();
+        bankConnectionFactory.setHost(BANK_HOST);
+        Connection bankConnection = bankConnectionFactory.newConnection();
 
         Channel bankPublishChannel = bankConnection.createChannel();
 
-        //String xmlRequest = receiveMessage(channel);
-        String xmlRequest = "<LoanRequest>    <ssn>12345678</ssn>    <creditScore>685</creditScore>    <loanAmount>1000.0</loanAmount>    <loanDuration>1973-01-01 01:00:00.0 CET</loanDuration> </LoanRequest>";
+        ConnectionFactory hostConnectionFactory = new ConnectionFactory();
+        hostConnectionFactory.setHost(HOST_NAME);
+        Connection hostConnection = hostConnectionFactory.newConnection();
+
+        Channel hostConsumeChannel = hostConnection.createChannel();
+
+        String xmlRequest = receiveMessage(hostConsumeChannel);
+        //String xmlRequest = "<LoanRequest>    <ssn>12345678</ssn>    <creditScore>685</creditScore>    <loanAmount>1000.0</loanAmount>    <loanDuration>1973-01-01 01:00:00.0 CET</loanDuration> </LoanRequest>";
         getBankXmlResponseAndForward(xmlRequest, bankPublishChannel);
-
-
     }
 
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
@@ -44,7 +49,7 @@ public class Main {
             ex.printStackTrace();
         }
 
-        System.out.println("[*] Consumed message from queue");
+        System.out.println("[*] Consumed message from queue:");
         return response;
 
     }
