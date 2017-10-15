@@ -22,8 +22,7 @@
 hs_err_pid*
 
 # .idea folder
-.idea/
+*.idea/
 
 # .DS_Store file, created automatically on Macs.
-.DS_Store
-
+*.DS_Store
