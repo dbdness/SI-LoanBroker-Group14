@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/translator_component.iml" filepath="$PROJECT_DIR$/translator_component.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XML-Translator-Component.iml" filepath="$PROJECT_DIR$/XML-Translator-Component.iml" />
     </modules>
   </component>
 </project>
