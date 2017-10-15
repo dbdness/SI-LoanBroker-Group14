@@ -30,9 +30,7 @@ public class Main {
         Channel hostPublishChannel = hostConnection.createChannel();
 
         String loanResponse = receiveMessage(bankConsumeChannel);
-        for(int i=0; i<10; i++){
-            System.out.println(loanResponse);
-        }
+        System.out.println(loanResponse);
 
         bankConsumeChannel.close();
         bankConsumeChannel.getConnection().close();
@@ -46,12 +44,14 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer);
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         String response = "";
         try {
-            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-            response = new String(delivery.getBody());
+            for(int i=0; i<10; i++){
+                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+                response = new String(delivery.getBody());
+            }
 
         } catch (InterruptedException ex) {
             ex.printStackTrace();
