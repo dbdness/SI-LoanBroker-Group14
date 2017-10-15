@@ -83,3 +83,7 @@ The  response format is:
 The credit score evaluator WSDL is located at: <br>
 http://138.68.85.24:8080/CreditScoreService/CreditScoreService?wsdl 
 </br>
+
+Our Rule Base WSDL is located at: <br>
+http://94.130.57.246:9000/rules/RequestBankRulesService?wsdl
+</br>
