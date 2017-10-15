@@ -4,7 +4,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
-import sun.reflect.annotation.ExceptionProxy;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -29,13 +31,39 @@ public class Main {
 
         Channel hostPublishChannel = hostConnection.createChannel();
 
-        String loanResponse = receiveMessage(bankConsumeChannel);
-        System.out.println(loanResponse);
+        //String loanResponse = receiveMessage(bankConsumeChannel);
+        String loanResponseJson = "{\"interestRate\":5.5,\"ssn\":1605789787}";
+        String toXml = jsonToXml(loanResponseJson);
+        System.out.println(toXml);
 
-        bankConsumeChannel.close();
-        bankConsumeChannel.getConnection().close();
+
+    }
+
+    /**
+     * Identifies the format of the specified message.
+     * @param message to identify.
+     * @return identification string.
+     */
+    private static String identifyMessage(String message){
+        
+
+    }
+
+    private static String jsonToXml(String jsonToConvert) {
+        String asXML = "";
+        try {
+            JSONObject jsonObject = new JSONObject(jsonToConvert);
+            asXML = XML.toString(jsonObject);
+            StringBuilder formatted = new StringBuilder(asXML);
+            formatted.insert(0, "<LoanResponse>");
+            formatted.append("</LoanResponse>");
+            asXML = formatted.toString();
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
 
 
+        return asXML;
     }
 
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
