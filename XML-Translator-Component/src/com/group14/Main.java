@@ -38,7 +38,7 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer);
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         String response = "";
         try {
