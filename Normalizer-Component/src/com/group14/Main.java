@@ -31,22 +31,36 @@ public class Main {
 
         Channel hostPublishChannel = hostConnection.createChannel();
 
-        //String loanResponse = receiveMessage(bankConsumeChannel);
-        String loanResponseJson = "{\"interestRate\":5.5,\"ssn\":1605789787}";
-        String toXml = jsonToXml(loanResponseJson);
-        System.out.println(toXml);
+        String loanResponse = receiveMessage(bankConsumeChannel);
+        //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
+        //String loanResponse = "<LoanResponse><interestRate>4.5600000000000005</interestRate><ssn>12345678</ssn></LoanResponse>";
+        String identifier = identifyMessage(loanResponse);
+        switch (identifier){
+            case "JSON":
+                loanResponse = jsonToXml(loanResponse);
+                break;
+            case "XML":
+                break;
+            case "unknown":
+                throw new IllegalArgumentException("The incoming message format was not recognised.");
+        }
 
+        sendMessage(loanResponse, hostPublishChannel);
 
     }
 
     /**
      * Identifies the format of the specified message.
+     *
      * @param message to identify.
      * @return identification string.
      */
-    private static String identifyMessage(String message){
-
-
+    private static String identifyMessage(String message) {
+        String identifier = "";
+        if (message.startsWith("{")) identifier = "JSON";
+        else if (message.startsWith("<")) identifier = "XML";
+        else identifier = "unknown";
+        return identifier;
     }
 
     private static String jsonToXml(String jsonToConvert) {
@@ -76,7 +90,7 @@ public class Main {
 
         String response = "";
         try {
-            for(int i=0; i<10; i++){
+            for (int i = 0; i < 10; i++) {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
                 response = new String(delivery.getBody());
             }
@@ -89,10 +103,10 @@ public class Main {
 
     }
 
-    private static void sendMessage(byte[] message, Channel channel) throws IOException, TimeoutException {
+    private static void sendMessage(String message, Channel channel) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);
-            channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message);
+            channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message.getBytes());
             System.out.println("[x] sent '" + message + "'");
         } catch (IOException ex) {
             ex.printStackTrace();
