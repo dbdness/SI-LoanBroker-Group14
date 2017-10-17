@@ -30,9 +30,6 @@ public class Main {
         //System.out.println(calculateBestLoan(loanRequests));
 
         sendMessage(bestInterestRate, hostChannel);
-
-
-
     }
 
     /**
@@ -76,20 +73,20 @@ public class Main {
 
     /**
      * Calculates the best interest rate, based on all loan responses.
+     *
      * @param loanResponses list of loan responses to check.
      * @return best provided interest rate.
      */
-    private static String calculateBestLoan(List<String> loanResponses){
+    private static String calculateBestLoan(List<String> loanResponses) {
         double interestRate = 0;
         String bank = "";
 
-        for(String loanResponse : loanResponses){
-            try{
-                //loanResponse = loanResponse.toLowerCase(); //Due to missing camelcase in WSDL attribute.
+        for (String loanResponse : loanResponses) {
+            try {
+                //loanResponse = loanResponse.toLowerCase(); //Due to missing camelcase in WSDL attribute. TODO Delete this code after XML altering.
                 double responseInterestRate = Double.parseDouble(getNodeValue(loanResponse, "interestRate"));
-                if(responseInterestRate > interestRate) interestRate = responseInterestRate;
-            }
-            catch (NumberFormatException ex){
+                if (responseInterestRate > interestRate) interestRate = responseInterestRate;
+            } catch (NumberFormatException ex) {
                 ex.printStackTrace();
             }
         }
@@ -100,7 +97,8 @@ public class Main {
 
     /**
      * Gets the value of requested node in an XML string.
-     * @param xml to analyze.
+     *
+     * @param xml  to analyze.
      * @param node to extract data from.
      * @return value of requested node in String format.
      */
@@ -122,6 +120,7 @@ public class Main {
 
     /**
      * Loads an XML String into a {@link Document} object, for better XML data handling.
+     *
      * @param xml string to load into a {@link Document}.
      * @return input XML String as {@link Document}.
      */
