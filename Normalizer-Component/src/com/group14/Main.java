@@ -35,7 +35,7 @@ public class Main {
         //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
         //String loanResponse = "<LoanResponse><interestRate>4.5600000000000005</interestRate><ssn>12345678</ssn></LoanResponse>";
         String identifier = identifyMessage(loanResponse);
-        switch (identifier){
+        switch (identifier) {
             case "JSON":
                 loanResponse = jsonToXml(loanResponse);
                 break;
@@ -90,10 +90,9 @@ public class Main {
 
         String response = "";
         try {
-            for (int i = 0; i < 10; i++) {
-                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-                response = new String(delivery.getBody());
-            }
+            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+            response = new String(delivery.getBody());
+
 
         } catch (InterruptedException ex) {
             ex.printStackTrace();
