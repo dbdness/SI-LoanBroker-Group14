@@ -3,6 +3,7 @@ package com.company;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -27,8 +28,14 @@ import java.util.concurrent.TimeoutException;
 public class Main {
     private static final String HOST_NAME = "207.154.228.245";
     private final static String PUBLISH_QUEUE_NAME = "Loan_Request_Queue";
+    private static final String CONSUME_QUEUE_NAME = "Aggregator_Queue";
 
     public static void main(String[] args) throws IOException, TimeoutException, SAXException, ParseException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST_NAME);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
         Loan loan = new Loan();
 
         Scanner reader = new Scanner(System.in);
@@ -52,14 +59,23 @@ public class Main {
 
         String finalLoanDuration = output + " 01:00:00.0 CET";
 
-        // Runs the writeXML method
-        writeXML(loan.getSSN(), loan.getLoanAmount(), finalLoanDuration);
+        // Runs the writeXML method and puts the loan request on a queue.
+        byte[] xmlAsBytes = writeXML(loan.getSSN(), loan.getLoanAmount(), finalLoanDuration);
+        sendMessage(xmlAsBytes, channel);
+
+        //Receives Loan Response
+        receiveMessage(channel);
+
+        //Closes the open connection
+        channel.close();
+        channel.getConnection().close();
 
 
     }
 
     // The method that makes the XML file
-    private static void writeXML(String ssn, double loanAmount, String loanDuration) {
+    private static byte[] writeXML(String ssn, double loanAmount, String loanDuration) {
+        byte[] xmlByteArray = null;
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -91,34 +107,46 @@ public class Main {
 
             transformer.transform(source, result);
 
-            byte[] xmlByteArray = bos.toByteArray();
+            xmlByteArray = bos.toByteArray();
 
             System.out.println("=== File converted to byte array ===");
 
-            // When all the above is done, then sendMessage() begin
-            sendMessage(xmlByteArray);
 
-
-        } catch (ParserConfigurationException | IOException | TransformerException | TimeoutException e) {
-            e.printStackTrace();
+        } catch (ParserConfigurationException | TransformerException ex) {
+            ex.printStackTrace();
         }
+
+        return xmlByteArray;
 
     }
 
+    private static void receiveMessage(Channel channel) throws IOException, TimeoutException {
+        channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
+        System.out.println("[*] Waiting for loan response...");
+
+        QueueingConsumer consumer = new QueueingConsumer(channel);
+
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
+
+        String response = "";
+        try {
+            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+            response = new String(delivery.getBody());
+
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+
+        System.out.println("[*] Received loan response:");
+        System.out.println(response);
+    }
+
     // The messaging method, which in the moment sends a test string
-    private static void sendMessage(byte[] message) throws IOException, TimeoutException {
-
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(HOST_NAME);
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-
+    private static void sendMessage(byte[] message, Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);
         channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message);
         System.out.println(" [X] Sent '" + message + "'");
 
-        channel.close();
-        connection.close();
     }
 
 }
