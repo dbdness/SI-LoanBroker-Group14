@@ -27,7 +27,6 @@ public class Main {
 
         List<String> loanRequests = receiveMessages(hostChannel);
         String bestInterestRate = calculateBestLoan(loanRequests);
-        //System.out.println(calculateBestLoan(loanRequests));
 
         sendMessage(bestInterestRate, hostChannel);
     }

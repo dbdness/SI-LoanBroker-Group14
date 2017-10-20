@@ -32,8 +32,10 @@ public class Main {
         Channel hostPublishChannel = hostConnection.createChannel();
 
         String loanResponse = receiveMessage(bankConsumeChannel);
-        //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
+        bankConsumeChannel.close();
+        bankConsumeChannel.getConnection().close();
         //String loanResponse = "<LoanResponse><interestRate>4.5600000000000005</interestRate><ssn>12345678</ssn></LoanResponse>";
+        //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
         String identifier = identifyMessage(loanResponse);
         switch (identifier) {
             case "JSON":
@@ -86,7 +88,7 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
+        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change to true
 
         String response = "";
         try {
