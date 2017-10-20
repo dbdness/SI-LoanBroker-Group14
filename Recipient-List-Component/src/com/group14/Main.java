@@ -6,6 +6,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -24,8 +25,9 @@ public class Main {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
-        String loanRequest = receiveMessage(channel); //First message receives LoanRequest
-        String applicableBanksString = receiveMessage(channel); //Second message receives appropriate banks.
+        List<String> messages = receiveMessage(channel);
+        String loanRequest = messages.get(0); //First message receives LoanRequest
+        String applicableBanksString = messages.get(1); //Second message receives appropriate banks.
         List<String> applicableBanks = splitString(applicableBanksString);
 
         for (String bank : applicableBanks) {
@@ -61,7 +63,7 @@ public class Main {
     }
 
 
-    private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
+    private static List<String> receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
@@ -69,16 +71,19 @@ public class Main {
 
         channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer);
 
-        String response = "";
+        List<String> messages = new ArrayList<>();
         try {
-            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-            response = new String(delivery.getBody());
+            for(int i=0; i<2; i++){ //Should grab two messages
+                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+                String response = new String(delivery.getBody());
+                messages.add(response);
+            }
 
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
 
-        return response;
+        return messages;
 
     }
 
@@ -86,7 +91,7 @@ public class Main {
         try {
             channel.queueDeclare(properQueue, false, false, false, null);
             channel.basicPublish("", properQueue, null, message);
-            System.out.println("[x] sent '" + message + "'");
+            System.out.println("[x] sent '" + message + "' to " + properQueue);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
