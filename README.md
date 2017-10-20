@@ -110,6 +110,9 @@ https://github.com/AlexanderFalk/bankjson
 
 ---
 
+## Process flow
+[Can be found here](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Process%20flow.pdf)
+
 ## Bottlenecks
 The program is not bulletproof. If the server http://94.130.57.246 , running at Hetzner.com, slams down, the whole program will stop functioning. We could make a failover server that function as a "Hot" server. This means that the exact moment the server stops running, the Hot-server will takeover and function as main server. Just until the main server is up and running again. A failover process is always a good idea, but since is a course project, we save the money for another cold day.  
 We also haven't thought of making Dead-letter queues in case anything goes wrong during the process flow. This is something that has to be taken into consideration for further development. 
