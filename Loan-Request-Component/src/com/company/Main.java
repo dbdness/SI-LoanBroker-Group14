@@ -39,8 +39,18 @@ public class Main {
         Loan loan = new Loan();
 
         Scanner reader = new Scanner(System.in);
+<<<<<<< Updated upstream
         System.out.println("Enter your social security number in the format ******-****:");
         loan.setSSN(reader.next());
+=======
+        // || !reader.next().matches("[0-9]+"
+        String ssn;
+        while ((ssn = reader.next()).length() != 11){
+            System.out.println("Invalid social security number! Use the format: ******-**** :");
+        }
+        ssn = ssn.replace("-", "");
+        loan.setSSN(ssn);
+>>>>>>> Stashed changes
 
         System.out.println("Enter how much you want to loan:");
         loan.setLoanAmount(reader.nextDouble());

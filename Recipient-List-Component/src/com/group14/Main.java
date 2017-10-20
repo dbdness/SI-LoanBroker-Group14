@@ -67,7 +67,11 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
+<<<<<<< Updated upstream
         channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
+=======
+        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO Change parameter to true.
+>>>>>>> Stashed changes
 
         String response = "";
         try {
