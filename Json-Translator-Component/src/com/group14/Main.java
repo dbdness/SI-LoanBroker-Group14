@@ -36,6 +36,9 @@ public class Main {
 
         //String xmlRequest = "<LoanRequest>    <ssn>12345678</ssn>    <creditScore>685</creditScore>    <loanAmount>1000.0</loanAmount>    <loanDuration>1973-01-01 01:00:00.0 CET</loanDuration> </LoanRequest>";
         String xmlRequest = receiveMessage(hostConsumeChannel);
+        hostConsumeChannel.close();
+        hostConsumeChannel.getConnection().close();
+
         String jsonRequest = xmlToJson(xmlRequest);
         getBankJsonResponseAndForward(jsonRequest, bankPublishChannel);
 
@@ -58,7 +61,7 @@ public class Main {
             ex.printStackTrace();
         }
 
-        System.out.println("[*] Consumed JSON message from queue:");
+        System.out.println("[*] Consumed JSON message from queue: " + CONSUME_QUEUE_NAME);
         return response;
 
     }
