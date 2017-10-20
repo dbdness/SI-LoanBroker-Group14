@@ -34,12 +34,12 @@ public class Main {
 
         Channel hostConsumeChannel = hostConnection.createChannel();
 
-        //String xmlRequest = "<LoanRequest>    <ssn>12345678</ssn>    <creditScore>685</creditScore>    <loanAmount>1000.0</loanAmount>    <loanDuration>1973-01-01 01:00:00.0 CET</loanDuration> </LoanRequest>";
         String xmlRequest = receiveMessage(hostConsumeChannel);
         hostConsumeChannel.close();
         hostConsumeChannel.getConnection().close();
 
         String jsonRequest = xmlToJson(xmlRequest);
+        System.out.println("Message successfully converted to JSON format.");
         getBankJsonResponseAndForward(jsonRequest, bankPublishChannel);
 
     }
@@ -50,7 +50,7 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
+        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change to true
 
         String response = "";
         try {
