@@ -38,15 +38,28 @@ public class Main {
 
         Loan loan = new Loan();
 
-        Scanner reader = new Scanner(System.in);
         System.out.println("Enter your social security number in the format ******-****:");
-        loan.setSSN(reader.next());
+        Scanner reader = new Scanner(System.in);
+        // || !reader.next().matches("[0-9]+"
+        String ssn;
+        while ((ssn = reader.next()).length() != 11){
+            System.out.println("Invalid social security number! Use the format: ******-**** :");
+        }
+        loan.setSSN(ssn);
 
+        double amount;
         System.out.println("Enter how much you want to loan:");
-        loan.setLoanAmount(reader.nextDouble());
+        while ((amount = reader.nextDouble()) <= 0){
+            System.out.println("Number must be higher than 0:");
+        }
+        loan.setLoanAmount(amount);
 
+        int duration;
         System.out.println("Enter the loan's duration in days:");
-        loan.setLoanDuration(reader.nextInt());
+        while ((duration = reader.nextInt()) <= 0){
+            System.out.println("Number must be higher than 0:");
+        }
+        loan.setLoanDuration(duration);
 
         reader.close();
 
@@ -69,8 +82,6 @@ public class Main {
         //Closes the open connection
         channel.close();
         channel.getConnection().close();
-
-
     }
 
     // The method that makes the XML file
