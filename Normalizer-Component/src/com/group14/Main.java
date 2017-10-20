@@ -1,14 +1,13 @@
 package com.group14;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Main {
@@ -31,23 +30,29 @@ public class Main {
 
         Channel hostPublishChannel = hostConnection.createChannel();
 
-        String loanResponse = receiveMessage(bankConsumeChannel);
+        List<String> loanResponses = receiveMessages(bankConsumeChannel);
         bankConsumeChannel.close();
         bankConsumeChannel.getConnection().close();
-        //String loanResponse = "<LoanResponse><interestRate>4.5600000000000005</interestRate><ssn>12345678</ssn></LoanResponse>";
-        //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
-        String identifier = identifyMessage(loanResponse);
-        switch (identifier) {
-            case "JSON":
-                loanResponse = jsonToXml(loanResponse);
-                break;
-            case "XML":
-                break;
-            case "unknown":
-                throw new IllegalArgumentException("The incoming message format was not recognised.");
+
+        for (String loan : loanResponses) {
+            String identifier = identifyMessage(loan);
+            switch (identifier) {
+                case "JSON":
+                    loan = jsonToXml(loan);
+                    break;
+                case "XML":
+                    break;
+                case "unknown":
+                    System.out.println("[ ] Error - The incoming message format was not recognised.");
+                    continue;
+            }
+
+            sendMessage(loan, hostPublishChannel);
         }
 
-        sendMessage(loanResponse, hostPublishChannel);
+        hostPublishChannel.close();
+        hostPublishChannel.getConnection().close();
+
 
     }
 
@@ -63,6 +68,10 @@ public class Main {
         else if (message.startsWith("<")) identifier = "XML";
         else identifier = "unknown";
         return identifier;
+
+        //String loanResponse = "<LoanResponse><interestRate>4.5600000000000005</interestRate><ssn>12345678</ssn></LoanResponse>";
+        //String loanResponse = "{\"interestRate\":5.5,\"ssn\":1605789787}";
+
     }
 
     private static String jsonToXml(String jsonToConvert) {
@@ -82,25 +91,42 @@ public class Main {
         return asXML;
     }
 
-    private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
+    /**
+     * Receives all the different Loan Responses from the Normalizer queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
+    private static List<String> receiveMessages(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change to true
+        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change Boolean parameter to "true" after testing.
 
+        List<String> loanResponses = new ArrayList<>();
         String response = "";
         try {
-            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-            response = new String(delivery.getBody());
+            do {
+                QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000); //One seconds in milliseconds.
+                try {
+                    response = new String(delivery.getBody());
+                    loanResponses.add(response);
+                } catch (NullPointerException ex) {
+                    break; //Breaks if there are no more incoming messages.
+                }
+            }
+            while (!response.equals(""));
 
 
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException | ShutdownSignalException | ConsumerCancelledException ex) {
             ex.printStackTrace();
         }
 
-        return response;
+        return loanResponses;
 
     }
 
@@ -112,8 +138,7 @@ public class Main {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        channel.close();
-        channel.getConnection().close();
+
 
     }
 }
