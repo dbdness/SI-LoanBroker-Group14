@@ -87,3 +87,29 @@ http://138.68.85.24:8080/CreditScoreService/CreditScoreService?wsdl
 Our Rule Base WSDL is located at: <br>
 http://94.130.57.246:9000/rules/RequestBankRulesService?wsdl
 </br>
+
+Our Bank WSDL can be requested at: <br>
+http://94.130.57.246:9000/bankwsdl/BankAppService?wsdl
+<br>
+The Github repo that describes the WSDL can be found here: <br>
+https://github.com/AlexanderFalk/bankwsdl
+<br>
+The WSDL has an adapter attached, since it is not able to communicate with a MessageQueue (RabbitMQ in this case). 
+Therefore the adapter which consumes from the **Get_Banks_Queue** and publish to **Group14_Bank_Response_Queue** , can be found here : <br>
+https://github.com/AlexanderFalk/bankadapterXML
+<br>
+The JSON Bank, which is the second self-made bank, can be found at this location: <br>
+http://94.130.57.246:9000/bankjson/bank 
+<br>
+But you have to send a POST request to this link: <br>
+http://94.130.57.246:9000/bankjson/bank/interestrate 
+<br>
+To see the documentation on how to use the bank, you can find it below: <br>
+https://github.com/AlexanderFalk/bankjson 
+<br>
+
+---
+
+## Bottlenecks
+The program is not bulletproof. If the server http://94.130.57.246 , running at Hetzner.com, slams down, the whole program will stop functioning. We could make a failover server that function as a "Hot" server. This means that the exact moment the server stops running, the Hot-server will takeover and function as main server. Just until the main server is up and running again. A failover process is always a good idea, but since is a course project, we save the money for another cold day.  
+We also haven't thought of making Dead-letter queues in case anything goes wrong during the process flow. This is something that has to be taken into consideration for further development. 
