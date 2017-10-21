@@ -7,7 +7,7 @@
 ## Overall Implementation  
 A requestor sends a request for a loan through the system. This request is firstly going through a component called: "Get Credit Score"(A Content Enricher). The "Get Credit Score" makes a request for the Credit Bureau, where all the information about a requestors credit is stored. After the retrieval of the score the component move on in the flow and get the banks through the "Get Banks"(Content Enricher) component. This component retrieves a set of rules based on the score given from the Credit Bureau. Some banks might not want to waste resources on requestors with low scores. When the rules have been applied, the cycle continues and the recipient list go out and grabs the banks that fit the implied rules. The messages are broadcastet to those banks, which were in the recipientlist, after they've been transformed into a format that the bank can read. This is the Translator component that determines the correct format for each bank. The banks look at the credit score from the requestor and based on the score, they determine an interest rate on the requested loan. The banks forwards their Best Quote back to the requestor. Before the requestor receives the Best Quote from each bank, they will go through a Normalizer and Aggregator component. The components will take the banks formats and transform it back to the requestor format and then aggregate all the quotes back into a single message.  
 
-![alt text](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Loan%20Broker%20overview.png)
+![Loan broker overview](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Loan%20Broker%20overview.png)
   
 **In Brief**  
 1. Receive the consumer's loan quote request (ssn, loan amount, loan duration)
@@ -117,6 +117,12 @@ https://github.com/AlexanderFalk/bankjson
 
 ## Process flow
 [Can be found here](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Process%20flow.pdf)
+
+## Design class diagram & Sequence diagram
+### Design class diagram
+
+### Sequence diagram
+[Sequence diagram](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/SSD%20-%20LoanBroker.jpg)
 
 ## Bottlenecks
 The program is not bulletproof. If the server http://94.130.57.246 , running at Hetzner.com, slams down, the whole program will stop functioning. We could make a failover server that function as a "Hot" server. This means that the exact moment the server stops running, the Hot-server will takeover and function as main server. Just until the main server is up and running again. A failover process is always a good idea, but since is a course project, we save the money for another cold day.  
