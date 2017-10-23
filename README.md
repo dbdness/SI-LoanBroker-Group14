@@ -121,7 +121,7 @@ https://github.com/AlexanderFalk/bankjson
 ## Process flow
 [Can be found here](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Process%20flow.pdf)
 
-## Design class diagram & Sequence diagram
+## Design class diagrams & Sequence diagram
 ### Design class diagrams
 #### 'Get Credit Score' component
 ![GetCreditScore](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Get_Credit_Score_Domain_Model.jpg)
