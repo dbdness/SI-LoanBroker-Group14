@@ -79,6 +79,8 @@ The  response format is:
 ```
 
 ---
+We have our own RabbitMQ cluster running on a server here:
+http://207.154.228.245:15672/
 
 The credit score evaluator WSDL is located at: <br>
 http://138.68.85.24:8080/CreditScoreService/CreditScoreService?wsdl 
