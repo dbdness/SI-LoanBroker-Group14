@@ -119,7 +119,39 @@ https://github.com/AlexanderFalk/bankjson
 [Can be found here](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Process%20flow.pdf)
 
 ## Design class diagram & Sequence diagram
-### Design class diagram
+### Design class diagrams
+#### 'Get Credit Score' component
+![GetCreditScore](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Get_Credit_Score_Domain_Model.jpg)
+
+#### 'Get banks' component
+![GetBanks](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Get_Banks_Diagram.jpg)
+
+#### Rulebase WSDL
+![RuleBaseWSDL](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Rules_WSDL_Domain_Model.jpg)
+
+#### Recipient list component
+![RecipientList](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Recipient_List_Domain_Model.jpg)
+
+#### XML Translator component
+![XmlTranslator](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/XML_Translator_Domain_Model.jpg)
+
+#### JSON Translator component
+![JsonTranslator](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/JSON_Translator_Domain_Model.jpg)
+
+#### Bank adapter
+![BankAdapter](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Bank_Adapter_Domain_Model.jpg)
+
+#### Normalizer component
+![Normalizer](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Normalizer_Domain_Model.jpg)
+
+#### Aggregator component 
+![Aggregator](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Aggregator_Domain_Model.jpg)
+
+#### WSDL Bank
+![WSDLBank](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/BANK_WSDL_Domain_Model.jpg)
+
+#### JSON Bank
+![JsonBank](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/Domain%20models/Bank_Json_Domain_Model.jpg)
 
 ### Sequence diagram
 ![Sequence diagram](https://github.com/dbdness/SI-LoanBroker-Group14/blob/master/SSD%20-%20LoanBroker.jpg)
