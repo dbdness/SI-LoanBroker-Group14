@@ -37,12 +37,27 @@ public class Main {
         channel.getConnection().close();
     }
 
+    /**
+     * Calls the WSDL Rule Base service, and receives a list of applicable banks, based on loan details.
+     * @param minCreditScore Credit score of the requester of the loan.
+     * @param loanAmount Desired loan amount.
+     * @param customerLoanDuration Desired loan duration.
+     * @return A list of Banks willing to issue the loan.
+     */
     private static java.util.List<java.lang.String> getBanks(int minCreditScore, double loanAmount, String customerLoanDuration) {
         RequestBankRulesService service = new RequestBankRulesService();
         RequestBankRules port = service.getRequestBankRulesPort();
         return port.getBanks(minCreditScore, loanAmount, customerLoanDuration);
     }
 
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
@@ -64,6 +79,12 @@ public class Main {
 
     }
 
+
+    /**
+     * Extracts the data values (SSN, credit score, loan amount & loan duration) from the specified XML String.
+     * @param xml XML String to extract data from.
+     * @return Array of data values as objects.
+     */
     private static Object[] getData(String xml) {
         String ssn = "";
         String creditScore = "";
@@ -94,6 +115,12 @@ public class Main {
 
     }
 
+    /**
+     * Loads the specified XML String as a Document object.
+     * @param xml XML String to load.
+     * @return Document object based on the XML String.
+     * @throws Exception
+     */
     private static Document loadXMLFromString(String xml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -104,6 +131,14 @@ public class Main {
 
     }
 
+    /**
+     * Puts the desired message on a queue.
+     *
+     * @param message message to send.
+     * @param channel channel to publish message.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void sendMessage(String message, Channel channel) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);

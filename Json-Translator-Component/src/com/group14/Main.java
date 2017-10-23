@@ -44,13 +44,22 @@ public class Main {
 
     }
 
+
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change to true
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         String response = "";
         try {
@@ -66,6 +75,11 @@ public class Main {
 
     }
 
+    /**
+     * Converts the specified XML String to JSON format.
+     * @param xmlToConvert XML String to convert.
+     * @return JSON String.
+     */
     private static String xmlToJson(String xmlToConvert) {
         String asJson = "";
         try {
@@ -97,6 +111,11 @@ public class Main {
 
     }
 
+    /**
+     * Calculates amount of days in Integer format from a proper Loan Request Date String.
+     * @param loanDuration Loan Request Date String.
+     * @return amount of days in integer format.
+     */
     private static long getAmountOfDays(String loanDuration) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         long diff = 0;
@@ -115,7 +134,12 @@ public class Main {
 
     }
 
-
+    /**
+     * Sends the Loan request to the JSON bank, and tells it to put the response on a reply-queue.
+     * @param jsonRequest Loan request in JSON format to send to the bank.
+     * @param channel channel to wire the message through.
+     * @throws Exception
+     */
     private static void getBankJsonResponseAndForward(String jsonRequest, Channel channel) throws Exception {
         channel.queueDeclare(REPLY_QUEUE_NAME, false, false, false, null);
 

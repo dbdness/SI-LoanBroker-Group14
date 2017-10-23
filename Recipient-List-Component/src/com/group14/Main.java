@@ -56,6 +56,13 @@ public class Main {
 
     }
 
+
+    /**
+     * Splits the specified raw Bank String into String objects.
+     *
+     * @param bankString Raw String of applicable banks.
+     * @return List of Bank String objects.
+     */
     private static List<String> splitString(String bankString) {
         bankString = bankString.replace("[", ""); //Trims first bracket.
         bankString = bankString.replace("]", ""); //Trims second bracket.
@@ -63,14 +70,21 @@ public class Main {
     }
 
 
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static List<String> receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO Change parameter to true.
-
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
         List<String> messages = new ArrayList<>();
         try {
             for (int i = 0; i < 2; i++) { //The consumer should grab two messages.
@@ -87,6 +101,14 @@ public class Main {
 
     }
 
+    /**
+     * Puts the desired message on a queue.
+     *
+     * @param message message to send.
+     * @param channel channel to publish message.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void sendMessage(byte[] message, Channel channel, String properQueue) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(properQueue, false, false, false, null);

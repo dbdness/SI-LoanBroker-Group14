@@ -38,12 +38,25 @@ public class Main {
 
     }
 
+    /**
+     * Calls the 'Get Credit Score' WSDL service and receives a credit score, based on the input ssn.
+     * @param ssn Social security number to receive a credit score on.
+     * @return Credit score based on the input SSN.
+     */
     private static int creditScore(java.lang.String ssn) {
         CreditScoreService_Service service = new CreditScoreService_Service();
         CreditScoreService port = service.getCreditScoreServicePort();
         return port.creditScore(ssn);
     }
 
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
@@ -65,6 +78,14 @@ public class Main {
 
     }
 
+    /**
+     * Puts the desired message on a queue.
+     *
+     * @param message message to send.
+     * @param channel channel to publish message.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void sendMessage(byte[] message, Channel channel) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);
@@ -78,6 +99,11 @@ public class Main {
 
     }
 
+    /**
+     * Extracts the social security number from the specified XML String.
+     * @param xml XML String to extract ssn from.
+     * @return ssn as a String object.
+     */
     private static String getSsn(String xml) {
         String ssn = "";
         try {
@@ -94,6 +120,12 @@ public class Main {
 
     }
 
+    /**
+     * Appends a credit score value to an existing XML String.
+     * @param xmlToAppend XML String to append credit score on.
+     * @param creditScore credit score to append on specified XML String.
+     * @return XML String with appended credit score, converted to byte array.
+     */
     private static byte[] appendCreditScore(String xmlToAppend, String creditScore) {
         byte[] xmlByteArray = {};
         try {
@@ -120,6 +152,12 @@ public class Main {
 
     }
 
+    /**
+     * Loads the specified XML String as a Document object.
+     * @param xml XML String to load.
+     * @return Document object based on the XML String.
+     * @throws Exception
+     */
     private static Document loadXMLFromString(String xml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

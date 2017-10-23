@@ -43,7 +43,7 @@ public class Main {
         loan.setSSN(reader.next());
         // || !reader.next().matches("[0-9]+"
         String ssn;
-        while ((ssn = reader.next()).length() != 11){
+        while ((ssn = reader.next()).length() != 11) {
             System.out.println("Invalid social security number! Use the format: ******-**** :");
         }
         ssn = ssn.replace("-", "");
@@ -80,7 +80,14 @@ public class Main {
 
     }
 
-    // The method that makes the XML file
+    /**
+     * Creates an XML loan request String, based on the specified ssn, loan amount and loan duration.
+     *
+     * @param ssn          social security number of the loan requester.
+     * @param loanAmount   desired loan amount.
+     * @param loanDuration desired loan duration.
+     * @return XML loan request string, converted to byte array.
+     */
     private static byte[] writeXML(String ssn, double loanAmount, String loanDuration) {
         byte[] xmlByteArray = null;
         try {
@@ -127,6 +134,14 @@ public class Main {
 
     }
 
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for loan response...");
@@ -148,7 +163,14 @@ public class Main {
         System.out.println(response);
     }
 
-    // The messaging method, which in the moment sends a test string
+    /**
+     * Puts the desired message on a queue.
+     *
+     * @param message message to send.
+     * @param channel channel to publish message.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void sendMessage(byte[] message, Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);
         channel.basicPublish("", PUBLISH_QUEUE_NAME, null, message);

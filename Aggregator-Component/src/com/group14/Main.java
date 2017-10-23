@@ -45,7 +45,7 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change Boolean parameter to "true" after testing.
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         List<String> loanResponses = new ArrayList<>();
         String response;
@@ -82,7 +82,6 @@ public class Main {
 
         for (String loanResponse : loanResponses) {
             try {
-                //loanResponse = loanResponse.toLowerCase(); //Due to missing camelcase in WSDL attribute. TODO Delete this code after XML altering.
                 double responseInterestRate = Double.parseDouble(getNodeValue(loanResponse, "interestRate"));
                 if (responseInterestRate > interestRate) interestRate = responseInterestRate;
             } catch (NumberFormatException ex) {

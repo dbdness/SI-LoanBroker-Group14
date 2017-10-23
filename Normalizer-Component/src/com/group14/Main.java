@@ -60,7 +60,7 @@ public class Main {
      * Identifies the format of the specified message.
      *
      * @param message to identify.
-     * @return identification string.
+     * @return identification string; either JSON, XML or unknown.
      */
     private static String identifyMessage(String message) {
         String identifier = "";
@@ -74,6 +74,11 @@ public class Main {
 
     }
 
+    /**
+     * Converts the specified JSON string to XML format.
+     * @param jsonToConvert JSON to convert to XML.
+     * @return XML string.
+     */
     private static String jsonToXml(String jsonToConvert) {
         String asXML = "";
         try {
@@ -92,7 +97,7 @@ public class Main {
     }
 
     /**
-     * Receives all the different Loan Responses from the Normalizer queue.
+     * Receives all the different Loan Responses from the Translator queue.
      *
      * @param channel channel to consume messages from.
      * @return list of different Loan Responses in String format.
@@ -105,7 +110,7 @@ public class Main {
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change Boolean parameter to "true" after testing.
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         List<String> loanResponses = new ArrayList<>();
         String response = "";
@@ -130,6 +135,14 @@ public class Main {
 
     }
 
+    /**
+     * Puts the desired message on a queue.
+     *
+     * @param message message to send.
+     * @param channel channel to publish message.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static void sendMessage(String message, Channel channel) throws IOException, TimeoutException {
         try {
             channel.queueDeclare(PUBLISH_QUEUE_NAME, false, false, false, null);

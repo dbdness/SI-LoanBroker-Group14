@@ -14,7 +14,6 @@ public class Main {
     private static final String REPLY_QUEUE_NAME = "Group14_Bank_Response_Queue";
 
     public static void main(String[] args) throws Exception {
-
         ConnectionFactory bankConnectionFactory = new ConnectionFactory();
         bankConnectionFactory.setHost(BANK_HOST);
         Connection bankConnection = bankConnectionFactory.newConnection();
@@ -34,13 +33,22 @@ public class Main {
         getBankXmlResponseAndForward(xmlRequest, bankPublishChannel);
     }
 
+
+    /**
+     * Receives the incoming message from the previous queue.
+     *
+     * @param channel channel to consume messages from.
+     * @return list of different Loan Responses in String format.
+     * @throws IOException
+     * @throws TimeoutException if the channel takes too long to respond.
+     */
     private static String receiveMessage(Channel channel) throws IOException, TimeoutException {
         channel.queueDeclare(CONSUME_QUEUE_NAME, false, false, false, null);
         System.out.println("[*] Waiting for messages...");
 
         QueueingConsumer consumer = new QueueingConsumer(channel);
 
-        channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change to true.
+        channel.basicConsume(CONSUME_QUEUE_NAME, true, consumer);
 
         String response = "";
         try {
@@ -57,7 +65,13 @@ public class Main {
     }
 
 
-    private static void getBankXmlResponseAndForward(String xmlRequest, Channel channel) throws Exception{
+    /**
+     * Sends the Loan request to the XML bank, and tells it to put the response on a reply-queue.
+     * @param xmlRequest Loan request in XML format to send to the bank.
+     * @param channel channel to wire the message through.
+     * @throws Exception
+     */
+    private static void getBankXmlResponseAndForward(String xmlRequest, Channel channel) throws Exception {
         channel.queueDeclare(REPLY_QUEUE_NAME, false, false, false, null);
 
         String replyKey = "xml";
