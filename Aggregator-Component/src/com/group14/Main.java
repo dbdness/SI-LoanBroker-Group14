@@ -48,7 +48,7 @@ public class Main {
         channel.basicConsume(CONSUME_QUEUE_NAME, false, consumer); //TODO change Boolean parameter to "true" after testing.
 
         List<String> loanResponses = new ArrayList<>();
-        String response = "";
+        String response;
         try {
             do {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000); //One seconds in milliseconds.
