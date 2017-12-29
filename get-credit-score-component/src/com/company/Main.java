@@ -24,16 +24,18 @@ public class Main {
     private static final String PUBLISH_QUEUE_NAME = "Get_Credit_Score_Queue";
 
     public static void main(String[] args) throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(HOST_NAME);
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+//        ConnectionFactory factory = new ConnectionFactory();
+//        factory.setHost(HOST_NAME);
+//        Connection connection = factory.newConnection();
+//        Channel channel = connection.createChannel();
+//
+//        String xmlMessage = receiveMessage(channel);
+//        String requestSsn = getSsn(xmlMessage);
+//        int creditScore = creditScore(requestSsn);
+//        byte[] updatedRequest = appendCreditScore(xmlMessage, String.valueOf(creditScore));
+//        sendMessage(updatedRequest, channel);
+        System.out.println(creditScore("010203-1234"));
 
-        String xmlMessage = receiveMessage(channel);
-        String requestSsn = getSsn(xmlMessage);
-        int creditScore = creditScore(requestSsn);
-        byte[] updatedRequest = appendCreditScore(xmlMessage, String.valueOf(creditScore));
-        sendMessage(updatedRequest, channel);
 
 
     }
@@ -46,6 +48,7 @@ public class Main {
     private static int creditScore(java.lang.String ssn) {
         CreditScoreService_Service service = new CreditScoreService_Service();
         CreditScoreService port = service.getCreditScoreServicePort();
+        //System.out.println(port.toString());
         return port.creditScore(ssn);
     }
 
